@@ -1,0 +1,20 @@
+services: # lista de containers
+  postgres: # nome do serviço (usado em `docker compose logs postgres`)
+    image: postgres:16 # imagem + tag (NUNCA latest)
+    container_name: smart-postgres # nome fixo do container (facilita debug)
+    environment: # variáveis lidas pelo Postgres na inicialização
+      POSTGRES_USER: smart
+      POSTGRES_PASSWORD: smart
+      POSTGRES_DB: smartcommerce
+    ports:
+      - '5432:5432' # host:container
+    volumes:
+      - pgdata:/var/lib/postgresql/data # volume nomeado → pasta de dados
+    healthcheck: # comando que valida se está "pronto"
+      test: ['CMD-SHELL', 'pg_isready -U smart -d smartcommerce']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes: # volumes nomeados (não vão pro Git, ficam no Docker)
+  pgdata:
